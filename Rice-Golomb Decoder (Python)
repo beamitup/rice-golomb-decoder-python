@@ -1,0 +1,33 @@
+def rice_golomb_decode(bitstream: str, k: int) -> list:
+    """
+    Decodes a Rice-Golomb encoded bitstream with parameter k.
+    
+    :param bitstream: A string of bits (e.g., "11011").
+    :param k: The Rice parameter (M = 2^k).
+    :return: List of decoded integers.
+    """
+    i = 0
+    n = len(bitstream)
+    result = []
+    
+    while i < n:
+        # Decode unary quotient (q)
+        q = 0
+        while i < n and bitstream[i] == '1':
+            q += 1
+            i += 1
+        if i >= n:
+            break  # malformed bitstream
+        i += 1  # skip the '0' terminator
+
+        # Decode binary remainder (r)
+        if i + k > n:
+            break  # incomplete remainder bits
+        r = int(bitstream[i:i + k], 2)
+        i += k
+
+        # Reconstruct original number: N = q * 2^k + r
+        N = (q << k) + r
+        result.append(N)
+
+    return result
